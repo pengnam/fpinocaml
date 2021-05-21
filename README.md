@@ -1,7 +1,9 @@
-_Catchy headline_
+_FPINOCAML_
 ==
 
-_Project description_
+This is a port of fpinscala to ocaml
+
+*IT IS A WORK IN PROGRESS*
 
 How to build the project
 --
