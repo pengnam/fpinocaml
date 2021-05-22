@@ -1,9 +1,14 @@
 open Fpinocaml_chapter3.A
 
+module type State  = 
+    sig
+        type t
+    end
 
-module State = struct
+module Make(S:State) = struct
 
-    type t 
+    type t = S.t
+
     type 'a  s = (t -> ('a * t)) ;;
 
     let unit_state (a: 'a): 'a s= fun (rng) -> (a, rng)
@@ -30,8 +35,7 @@ module State = struct
     let get: t s = 
         fun (r:t) -> (r,r)
 
-    let set (_: 'a s) (s: 'a): unit s = fun (_: t) -> ((), s)
-
+    let set  (s: 'a): unit s = fun (_: t) -> ((), s)
 
 end;;
 
