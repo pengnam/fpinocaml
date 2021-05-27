@@ -49,6 +49,6 @@ module MyList = struct
         | _, Nil -> true
         | Nil, Cons(_, _) -> false
 
-
+    let (>:) h t  = cons h t
 
 end;;
