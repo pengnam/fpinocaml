@@ -16,6 +16,7 @@ module Par = struct
 
     let run (a: 'a t): 'a Deferred.t =  a ()
 
+
     let evaluate_deferred (a: 'a Deferred.t): 'a = Thread_safe.block_on_async_exn (
         fun ()-> a >>= fun x -> 
             (* Just to make sure everything prints*)
@@ -28,6 +29,13 @@ module Par = struct
         let da = run pa in
         let db = run pb in
         return (f (evaluate_deferred da) (evaluate_deferred db))
+
+    let async_f (f: 'a -> 'b): 'a -> 'b t = fun a -> lazy_unit (fun () -> (f a))
+
+    let map (p: 'a t) (f: 'a -> 'b) = 
+        map2(p)(unit ()) (fun a _ -> f a)
+
+    let sort_par(pl:int List.t t): int List.t t = map pl (fun x-> List.sort x ~compare:Int.compare)
 
 
     
