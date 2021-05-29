@@ -43,8 +43,36 @@ module Par = struct
 
     let sort_par(pl:int List.t t): int List.t t = map pl (fun x-> List.sort x ~compare:Int.compare)
 
-    let sequence (ps: 'a t List.t): 'a List.t t =
+    let sequence_simple (ps: 'a t List.t): 'a List.t t =
         List.fold_right ~init:(unit []) ~f:(fun ph pacc -> (map2 ph pacc (fun h acc -> h::acc))) ps
+
+    (* Slight difference: this is 'tail-recusive' since unlike simple no stack*)
+    let rec sequence_right (ps: 'a t List.t): 'a List.t t=
+        match ps with 
+        | [] -> unit []
+        | h::t -> map2 h (sequence_right t) (fun h t -> h::t)
+
+    let sequence_balanced (ps: 'a t Array.t): 'a Array.t t =
+        (* concat operator not efficient but will make do for now*)
+        let rec sequence_balanced_helper (s:int) (e:int): 'a Array.t t =
+            if (s = e) then unit (Array.create ~len:0 0)
+            else if ((e - s) = 1) then
+                map (Array.get ps s) (fun x -> List.to_array [x])
+            else
+                let m = (s + 2) / 2 in
+                map2 (sequence_balanced_helper s m) (sequence_balanced_helper m e) (fun left right -> Array.append left right)
+                
+
+        in sequence_balanced_helper 0 (Array.length ps)
+
+    let sequence (ps: 'a t List.t): 'a List.t t=
+        map (sequence_balanced (List.to_array ps)) (Array.to_list)
+
+
+
+
+
+
 
     let par_map (ps: 'a List.t) (f: 'a -> 'b): 'b List.t t = 
         sequence (List.map ps ~f:(async_f f))
@@ -56,7 +84,8 @@ module Par = struct
         lazy_unit(fun ()-> List.filter al ~f:f)
         *)
         let list_of_lists = par_map al (fun a -> if (f a) then [a] else []) in 
-        map list_of_lists List.concat
+            map list_of_lists List.concat
+
 
 
 
