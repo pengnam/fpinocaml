@@ -4,5 +4,5 @@
 (library
  (name fpinocaml_chapter6)
  (public_name fpinocaml.chapter6)
- (libraries unix fpinocaml.chapter3)
+ (libraries unix core fpinocaml.chapter3)
  (synopsis "Chapter 6 is for basic people"))

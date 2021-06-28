@@ -11,6 +11,8 @@ let test_suites : unit Alcotest.test list =
     ("Chapter4.C", Test_chapter4.C.tests);
     ("Chapter5.A", Test_chapter5.A.tests);
     ("Chapter6.A", Test_chapter6.A.tests);
+    ("Chapter7.A", Test_chapter7.A.tests);
+    ("Chapter8.A", Test_chapter8.A.tests);
   ]
 
 let () = Alcotest.run "fpinocaml" test_suites

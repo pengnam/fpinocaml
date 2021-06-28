@@ -56,7 +56,7 @@ end;;
 
         let rec fold_right op acc = function 
             | Cons(h,t) -> op (fold_right op acc (Lazy.force t)) h
-        | Empty -> acc
+            | Empty -> acc
 
 
         let exists p =
@@ -71,6 +71,7 @@ end;;
 
         let head_option2  (l: 'a t): ('a option)= 
             fold_right (fun _ h -> Some(h)) (None) l
+
 
     (*
      This throws an error because it is still possible to pass in a list and not return the right None type
@@ -165,6 +166,10 @@ end;;
             )
 
 
+        let rec find (f: 'a -> bool) (sa: 'a t): 'a Option.t =
+          match sa with
+          | Cons(ha, ta) -> if (f ha) then Some(ha) else find f (Lazy.force ta)
+          | Empty -> None
 
 
 end;;

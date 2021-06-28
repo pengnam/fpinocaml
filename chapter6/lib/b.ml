@@ -1,3 +1,4 @@
+open Core
 open Fpinocaml_chapter3.A
 
 module type State  = 
@@ -13,13 +14,21 @@ module Make(S:State) = struct
 
     let unit_state (a: 'a): 'a s= fun (rng) -> (a, rng)
 
-    let sequence (l: ('a s) MyList.t): ('a MyList.t) s  = 
+    let sequence2 (l: ('a s) MyList.t): ('a MyList.t) s  = 
         fun seed -> MyList.fold_left 
         (fun ( acc, prev_seed) h -> 
             let (res, next_seed) = h prev_seed in
             (MyList.cons res acc, next_seed)
         ) 
         ( MyList.empty, seed)
+        l
+    let sequence (l: ('a s) List.t): ('a List.t) s  = 
+        fun seed -> List.fold
+        ~f:(fun ( acc, prev_seed) h -> 
+            let (res, next_seed) = h prev_seed in
+            ( res::acc, next_seed)
+        ) 
+    ~init:( [], seed)
         l
     let flat_map (f: 'a s) (g: 'a -> 'b s): 'b s =
         fun (r:t) -> 

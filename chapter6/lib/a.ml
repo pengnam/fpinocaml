@@ -80,6 +80,9 @@ module SimpleRng = struct
 
     
         
+    let boolean:bool rand = 
+      fun (r:rng) -> let (x, r2) = non_negative_int r in
+        if (x mod 2 == 1) then (true, r2) else (false, r2)
 
 
 end;;
