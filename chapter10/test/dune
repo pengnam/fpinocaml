@@ -1,0 +1,4 @@
+(library
+ (name test_chapter10)
+ (libraries alcotest fpinocaml.chapter10)
+ (synopsis "Tests for sub1"))

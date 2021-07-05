@@ -1,6 +1,6 @@
 (executable
  (name run_tests)
- (libraries alcotest test_chapter2 test_chapter3 test_chapter4 test_chapter5 test_chapter6))
+ (libraries alcotest test_chapter2 test_chapter3 test_chapter4 test_chapter5 test_chapter6 test_chapter7 test_chapter8 test_chapter10))
 
 (rule
  (alias runtest)
