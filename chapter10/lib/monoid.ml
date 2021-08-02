@@ -1,5 +1,5 @@
 open Core
-include Fpinocaml_chapter7.A
+open Fpinocaml_chapter7.A
 
 (* use of an intermediate dummy module here (look at OptionMonoid)*)
 (* source: http://rgrinberg.com/posts/free-monads-in-the-wild-ocaml/ *)
@@ -131,7 +131,7 @@ let test_monoid (type a) (module Eq: Comparable.S with type t = a) (module M: Mo
 
 module Array = struct
   include Core.Array
-  let fold_map (aa:'a t) (module M:MonoidResult with type t = 'b) (f: 'a -> 'b):'b =
+  let fold_map (type b) (aa:'a t) (module M:MonoidResult with type t = b) (f: 'a -> b):b =
     let rec fold_map_helper (s:int) (e:int) =
       let l = e - s in
       if (l <= 0) then
@@ -159,16 +159,11 @@ module MonoidParFunctor: functor (T: GENERIC_TYPE_WORKAROUND) (MonoidResultInsta
       let zero = Par.unit MonoidResultInstance.zero
     end
 
-    module T1: MonoidResult  with type t = T.t Par.t = struct
-      include MonoidFunctor(T0)
-    end
+  module T1 = (MonoidFunctor(T0))
     include T1
-      (*this is par_fold_map*)
-        (*Hmm how should I fix this TODO*)
-        (*
+    (*this is par_fold_map*)
     let fold_map al f =
-      Array.fold_map (T1.t) al (module T1) f
-         *)
+      Array.fold_map (List.to_array al) (module T1) f
   end
 (*
 let par (type t) (module M: MonoidResult with type t = t): (module MonoidResult with type t = t Par.t)  =
