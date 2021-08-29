@@ -1,0 +1,8 @@
+; name = name of the supermodule that will wrap all source files as submodules
+; public_name = name of the library for ocamlfind and opam
+
+(library
+ (name fpinocaml_chapter11)
+ (public_name fpinocaml.chapter11)
+ (libraries unix core fpinocaml.chapter7 fpinocaml.chapter5 fpinocaml.chapter6)
+ (synopsis "Chapter 11 is for basic people"))
