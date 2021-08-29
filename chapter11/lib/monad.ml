@@ -192,4 +192,56 @@ module Make2: functor (X:Basic2)-> (S2 with type ('a, 'e)  t = ('a, 'e) X.t) =
  * Deciding how to create a State. I can try passing a set of primitives, 'a t and run, otherwise I can do it how
  * http://blogs.perl.org/users/cyocum/2012/11/writing-state-monads-in-ocaml.html has done it
 *)
-  (*StateMonad*)
+(*StateMonad*)
+
+module T = struct
+    type ('a, 's) t = ('s -> ('a * 's))
+    let bind ta ~f s = (let a, ns = (ta s) in f a ns)
+    let map = `Custom (fun ta ~f s -> (let a, ns = (ta s) in (f a, ns)))
+    let return a s = (a, s)
+end
+
+(*
+module type StateMonad = sig
+  include Monad.S2
+  val get_state: ('a, 's) t -> ('s, 's) t
+  val set_state: ('a, 's) t -> 's  -> (unit, 's) t
+end
+*)
+module StateMonad= struct
+  include T
+  include Monad.Make2(T)
+
+  let get_state _ = fun s ->  (s,s)
+
+  let set_state _ (s:'s)= fun _ -> ((), s)
+
+  let run ta s = ta s
+
+end
+
+(* A little more tricky with the typing but I will ignore for now
+module IntStateMonad= struct
+  type state = int
+  include (StateMonad : StateMonad with type ('a, 's) t := (state -> ('a * state) ) )
+end
+ *)
+
+(*Zip with index*)
+
+let zip_with_index (la: 'a List.t): (int * 'a) List.t =
+  let sm = List.fold_left
+    (*'a is list 's is int *)
+    ~init:(StateMonad.return [])
+    ~f:StateMonad.(
+      fun acc a ->
+        acc >>= (
+          fun xs ->  (get_state acc) >>= (
+              fun n -> (set_state acc (n + 1)) >>| (
+                  fun _ -> ((n, a) :: xs)
+                )
+            )
+         )
+    )
+    la in
+ List.rev (fst (StateMonad.run sm 0))
