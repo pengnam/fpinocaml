@@ -44,7 +44,6 @@ module Make(S:State) = struct
     let get: t s = 
         fun (r:t) -> (r,r)
 
-    let set  (s: 'a): unit s = fun (_: t) -> ((), s)
 
 end;;
 

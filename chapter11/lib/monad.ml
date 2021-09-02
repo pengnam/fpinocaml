@@ -17,7 +17,7 @@ module type S = sig
   val compose: fa:('a -> 'b t)-> fb:('b-> 'c t)-> ('a -> 'c t)
 end
 
-module Make: functor (X:Basic)-> (S with type 'a t = 'a X.t) =
+module Make: functor (X:Basic)-> (S with type 'a t := 'a X.t) =
   functor  (X:Basic) -> struct
     include X
     let map ta ~f =
@@ -245,3 +245,4 @@ let zip_with_index (la: 'a List.t): (int * 'a) List.t =
     )
     la in
  List.rev (fst (StateMonad.run sm 0))
+
