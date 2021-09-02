@@ -46,7 +46,9 @@ module TraverseList (F:Applicatives.S with type 'a t = 'a List.t)(G:Applicatives
             ~f:(fun prev a -> G.map2 prev (f a) ~f:(fun pl b -> b::pl))
             fa
       )
-    end
+  end
+  include T
+  include Make(T)
 
 end
 
@@ -60,6 +62,8 @@ module TraverseOption (F:Applicatives.S with type 'a t = 'a Option.t)(G:Applicat
           | Some a -> G.map (f a) ~f:(fun x -> Some x)
       )
     end
+  include T
+  include Make(T)
 
 end
 
@@ -73,6 +77,8 @@ module TraverseTree(F:Applicatives.S with type 'a t = 'a Option.t)(G:Applicative
           | Some a -> G.map (f a) ~f:(fun x -> Some x)
       )
     end
+  include T
+  include Make(T)
 end
 
 
