@@ -1,0 +1,6 @@
+
+(library
+ (name fpinocaml_chapter12)
+ (public_name fpinocaml.chapter12)
+ (libraries unix core fpinocaml.chapter11)
+ (synopsis "Chapter 12 is for basic people"))
