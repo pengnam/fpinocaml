@@ -15,6 +15,8 @@ module type S = sig
   val replicate_m: int -> 'a t -> 'a list t
   val filter_m: 'a list -> ('a -> bool t) -> 'a list t
   val compose: fa:('a -> 'b t)-> fb:('b-> 'c t)-> ('a -> 'c t)
+  (*effects chapter*)
+  val do_while: 'a t -> cond:('a -> bool t) -> unit t
 end
 
 module Make: functor (X:Basic)-> (S with type 'a t := 'a X.t) =
@@ -83,6 +85,13 @@ module Make: functor (X:Basic)-> (S with type 'a t := 'a X.t) =
     let _compose_2 (fa:('a -> 'b t)) (fb:('b-> 'c t)): ('a -> 'c t) =
       fun a -> _join (map (fa a) ~f:fb)
 
+    let rec do_while ta ~cond =
+      flat_map ta ~f:(
+        fun a -> flat_map (cond a) ~f: (
+            fun ok ->
+              if (ok) then (do_while (ta) ~cond:(cond)) else unit(fun() -> ())
+          )
+        )
   end
 
 
