@@ -17,6 +17,7 @@ module type S = sig
   val compose: fa:('a -> 'b t)-> fb:('b-> 'c t)-> ('a -> 'c t)
   (*effects chapter*)
   val do_while: 'a t -> cond:('a -> bool t) -> unit t
+  val forever: 'a t -> 'b t
 end
 
 module Make: functor (X:Basic)-> (S with type 'a t := 'a X.t) =
@@ -91,7 +92,11 @@ module Make: functor (X:Basic)-> (S with type 'a t := 'a X.t) =
             fun ok ->
               if (ok) then (do_while (ta) ~cond:(cond)) else unit(fun() -> ())
           )
-        )
+      )
+
+
+    let rec forever ta =
+      flat_map ta ~f:(fun _ -> forever ta)
   end
 
 
